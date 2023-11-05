@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 
-
-# The purpose of this script is to easy install all the necessary tool and configuration in a kali machine
-#     install code
-#     install and set zsh, ohmyz and powerlevel10k
-#     install pyenv, set it
-#     install docker-ce, docker compose plugin
-#     install golang
+# The purpose of this script is to easy install all the necessary tools/configurations in a kali machine. The supported installations/configurations in this moment are:
+#   vscode
+#   zsh, ohmyz and powerlevel10k
+#   pyenv and enable virtualenv version on zsh bash (if present)
+#   docker-ce, docker compose plugin
+#   golang
 
 
 # fail fast
@@ -29,7 +28,7 @@ Available options:
 -a, --all                   Install all the tools listed above
 -c, --vscode                Install vscode
 #todo change name to omz, here we are going to install oh-my-zsh nopt zsh
--z, --zsh                   Install zsh and oh-my-zsh
+-z, --omz                  Install zsh and oh-my-zsh
 -u, --zsh-user              Specify the user to enable zsh
 -k, --pl10k                 Install powerlevel10k template on zsh
 -p, --pyenv                 Install pyenv
@@ -39,10 +38,10 @@ Available options:
 
 Example:
     - ./playbook-kali.sh --all --stable-debian-version bookworm --zsh-user kali
-    - ./playbook-kali.sh --zsh --pl10k --zsh-user kali
+    - ./playbook-kali.sh --omz --pl10k --zsh-user kali
     - ./playbook-kali.sh --pyenv
     - ./playbook-kali.sh --docker --stable-debian-version bookworm
-    - ./playbook-kali.sh --pyenv --zsh --pl10k
+    - ./playbook-kali.sh --pyenv --omz --pl10k
 EOF
 exit
 }
@@ -93,7 +92,7 @@ parse_params() {
         -c | --vscode) vscode=1 ;;
 
         # zsh
-        -z | --zsh) zsh=1 ;;
+        -z | --omz) zsh=1 ;;
         # named parameter
         -u | --zsh-user) 
         user="${2-}"
@@ -128,7 +127,7 @@ parse_params() {
 }
 
 install_all(){
-    msg "\n${GREEN}**** Installing all the components ******"
+    msg "\n${GREEN}******** Installing all the components ******"
     install_zsh_omz
     install_pl10k
     install_pyenv
@@ -138,7 +137,7 @@ install_all(){
 }
 
 install_vscode(){
-    msg "\n${YELLOW}**** Installing vscode ******"
+    msg "\n${YELLOW}******** Installing vscode ******"
 
     sudo apt-get install wget gpg
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
@@ -155,24 +154,24 @@ install_vscode(){
 
 
 install_zsh_omz(){
-    msg "\n${BLUE}**** Installing zsh ******"
-
+    msg "\n${BLUE}******** Installing zsh and h My Zsh! ******"
     # install ZSH
+    msg "\n${BLUE}sudo apt -y install zsh requires the password"
     sudo apt -y install zsh
 
     # install oh-my-zsh via curl
     # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
     export RUNZSH="no"
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &> /dev/null
 
     # install zsh-autosuggestions 
-    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+    git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &> /dev/null
 
     # zsh-syntax-highlighting 
-    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &> /dev/null
 
     # switch from BASH to ZSH
-    sudo chsh -s /bin/zsh "$user"
+    sudo chsh -s /bin/zsh "$user" 1> /dev/null
 
     # check if $user has set properly
     check=$(sudo cat /etc/passwd | grep "$user")
@@ -182,41 +181,56 @@ install_zsh_omz(){
     fi
 
     # enable zsh-autosuggestions and zsh-syntax-highlighting
-    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' /home/"${user}"/.zshrc
+    sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' /home/"${user}"/.zshrc &> /dev/null
 
     msg "${BLUE}****************************************************"
 }
 
 install_pl10k(){
-    # check before that .oh-my-zsh is installed
+    # check if .oh-my-zsh is installed
     if [ ! -d "/home/${user}/.oh-my-zsh" ];
     then
-        die "${RED} Install oh-my-zsh first (./playbook-kali.sh --zsh --zsh-user <username>)"
+        die "${RED} Install oh-my-zsh first (./playbook-kali.sh --omz --zsh-user <username>)"
     fi
 
-    msg "\n${CYAN}**** Installing powerlevel10k ******"
+    msg "\n${CYAN}******** Installing powerlevel10k ******"
 
     # download powerlevel10k theme
     if [ ! -d "/home/${user}/.oh-my-zsh/custom/themes/powerlevel10k" ];
     then
-        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+        git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k &> /dev/null
     else
         msg "\n${CYAN}powerlevel10k theme is alredy present, enabling it"
     fi
 
     # enable powerlevel10k theme
-    sed -i 's/ZSH_THEME="robbyrussell"/ ZSH_THEME="powerlevel10k\/powerlevel10k"/' /home/"${user}"/.zshrc
+    sed -i 's/ZSH_THEME="robbyrussell"/ ZSH_THEME="powerlevel10k\/powerlevel10k"/' /home/"${user}"/.zshrc &> /dev/null
 
-    msg "${CYAN}\n!! Start new terminal and follow the wizard to complete the setup !!"
+    # edit .zshrc file adding in the head of file
+    sed -i '1s/^/# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then
+source \"\${XDG_CACHE_HOME:-\$HOME\/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
+fi/'  /home/"${user}"/.zshrc
 
-    # idea: copia e incolla il mio file di configurazione, e scrivi che se non piace di runnare "p10k configure"
+    # edit .zshrc file adding in the tail
+    echo -e "# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
+
+    # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
+    wget -O /home/"${user}"/.pk10.sh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/pk10.sh
+
+    msg "${CYAN} To customize prompt, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
+
+    # idea: copia e incolla il mio file di configurazione (~/.p10k.zsh), e scrivi che se non piace di runnare "p10k configure"
     msg "${CYAN}****************************************************"
 }
 
-# ./Desktop/playbook-kali.sh --zsh --pl10k --zsh-user kali --pyenv
+# ./Desktop/playbook-kali.sh --omz --pl10k --zsh-user kali --pyenv
 # ./Desktop/playbook-kali.sh --pyenv --zsh-user kali
 install_pyenv(){
-    msg "\n${PURPLE}**** Installing pyenv ******"
+    msg "\n${PURPLE}******** Installing pyenv ******"
 
     # Install pyenv
     curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
@@ -234,24 +248,21 @@ eval \"\$(pyenv virtualenv-init -)\"" >> /home/"${user}"/.zshrc
     msg "${PURPLE}****************************************************\n"
 }
 
-enable_virtual_enviroment(){
+enable_virtual_enviroment_on_bash(){
     # if powerlevel10k is present, enable virtualenv version on bash
-
-    # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
     if [ ! -f ~/.p10k.zsh ];
     then
-        die "${RED} Install oh-my-zsh first (./playbook-kali.sh --zsh --zsh-user <username>)"
+        die "${RED} Install oh-my-zsh and powerlevel10k theme first (./playbook-kali.sh --omz --pl10k --zsh-user <username>)"
     fi
 
-    if grep -q "ZSH_THEME=\"powerlevel10k\/powerlevel10k\"" /home/"${user}"/.zshrc;
+    if grep -q "ZSH_THEME=\"powerlevel10k\/powerlevel10k\"" /home/"${user}"/.p10k.zsh;
     then
         sed -i 's/typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=false/typeset -g POWERLEVEL9K_VIRTUALENV_SHOW_WITH_PYENV=true/' /home/"${user}"/.p10k.zsh
-
     fi
 }
 
 install_docker(){
-    msg "\n${ORANGE}**** Installing docker ******"
+    msg "\n${ORANGE}******** Installing docker ******"
     # # Run the following command to uninstall all conflicting packages:
     # for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
 
@@ -269,7 +280,7 @@ install_docker(){
 }
 
 install_golang(){ 
-    msg "\n${YELLOW}**** Installing golang ******"
+    msg "\n${YELLOW}******** Installing golang ******"
     # Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:
         # $ rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
 
