@@ -210,25 +210,24 @@ install_pl10k(){
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then
-source \"\${XDG_CACHE_HOME:-\$HOME\/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
-fi
-"
-    zsrc=$(cat "/home/kali/.zshrc")
-    echo "$text_to_add" > /home/"${user}"/.zshrc
+source \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
+fi\n"
+    zsrc=$(cat "/home/${user}/.zshrc")
+    echo -e "$text_to_add" > /home/"${user}"/.zshrc
     echo "$zsrc" >> /home/"${user}"/.zshrc
 
     # edit .zshrc file adding in the tail
-    echo "# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
+    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
 
     # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
-    wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k.zsh &> /dev/null
+    wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k.zsh &> /dev/null
 
-    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k-instant-prompt-kali.zsh &> /dev/null
-    chmod /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh 700
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k-instant-prompt-kali.zsh &> /dev/null
+    chmod 700 /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh
 
-    chmod /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc 444
-    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k-instant-prompt-kali.zsh.zwc &> /dev/null
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k-instant-prompt-kali.zsh.zwc &> /dev/null
+    chmod 444 /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc
 
     msg "${CYAN} To customize prompt, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
 
