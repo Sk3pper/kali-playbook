@@ -129,7 +129,7 @@ parse_params() {
 }
 
 install_all(){
-    msg "\n${GREEN}******** Installing all the components ******"
+    msg "\n${GREEN}******** Installing all components ******"
     install_vscode
     install_zsh_omz
     install_pl10k
