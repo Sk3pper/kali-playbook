@@ -7,9 +7,10 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * golang
 
 <!-- ## Table of contents
-* [General info](#general-info)
-* [Technologies](#technologies)
-* [Setup](#setup) -->
+    * [General info](#general-info)
+    * [Technologies](#technologies)
+    * [Setup](#setup) 
+-->
 
 ## Installation 🔨
 ### Run via curl
