@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#todo: add file path where to write logs of commands
+
 # The purpose of this script is to easy install all the necessary tools/configurations in a kali machine. The supported installations/configurations in this moment are:
 #   vscode
 #   zsh, ohmyz and powerlevel10k
@@ -32,15 +34,16 @@ Available options:
 -k, --pl10k                 Install powerlevel10k template on zsh
 -p, --pyenv                 Install pyenv
 -d, --docker                Install docker and docker compose
--g, --golang                Install golang
+-g, --golang                Install golang 1.21.3 x86-64
 -s, --stable-debian-version Specify debian stable version to install the right versions of the component (eg: bookworm)
 
 Example:
     - ./playbook-kali.sh --all --stable-debian-version bookworm --user kali
+    - ./playbook-kali.sh --vscode --omz --pl10k
     - ./playbook-kali.sh --omz --pl10k --user kali
     - ./playbook-kali.sh --pyenv
     - ./playbook-kali.sh --docker --stable-debian-version bookworm --user kali
-    - ./playbook-kali.sh --pyenv --omz --pl10k
+    - ./playbook-kali.sh --golang
 EOF
 exit
 }
@@ -52,9 +55,9 @@ cleanup() {
 
 setup_colors() {
     if [[ -t 2 ]] && [[ -z "${NO_COLOR-}" ]] && [[ "${TERM-}" != "dumb" ]]; then
-        NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' YELLOW='\033[1;33m'
+        NOFORMAT='\033[0m' RED='\033[0;31m' GREEN='\033[0;32m' ORANGE='\033[0;33m' BLUE='\033[0;34m' PURPLE='\033[0;35m' CYAN='\033[0;36m' GRAY="\033[0;37m"
     else
-        NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' YELLOW=''
+        NOFORMAT='' RED='' GREEN='' ORANGE='' BLUE='' PURPLE='' CYAN='' GRAY=''
     fi
 }
 
@@ -127,6 +130,7 @@ parse_params() {
 
 install_all(){
     msg "\n${GREEN}******** Installing all the components ******"
+    install_vscode
     install_zsh_omz
     install_pl10k
     install_pyenv
@@ -136,27 +140,35 @@ install_all(){
 }
 
 install_vscode(){
-    msg "\n${YELLOW}******** Installing vscode ******"
+    msg "\n${GRAY}******** vscode ******"
 
-    sudo apt-get install wget gpg
+    msg "\n${GRAY} sudo apt install wget gpg requires password:"
+    sudo apt -y install wget gpg &> /dev/null
+
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
-    sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg
-    sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-    rm -f packages.microsoft.gpg
 
-    sudo apt install apt-transport-https
-    sudo apt update
-    sudo apt install code # or code-insiders
+    sudo install -D -o root -g root -m 644 packages.microsoft.gpg /etc/apt/keyrings/packages.microsoft.gpg &> /dev/null
+    sudo sh -c 'echo "deb [arch=amd64,arm64,armhf signed-by=/etc/apt/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list' &> /dev/null
+    rm -f packages.microsoft.gpg &> /dev/null
 
-    msg "${YELLOW}****************************************************"
+    msg "${GRAY} Updating system...."
+    sudo apt -y install apt-transport-https &> /dev/null
+    sudo apt update &> /dev/null
+
+    msg "${GRAY} Installing vscode...."
+    sudo apt install code &> /dev/null # or code-insiders
+
+    code .
+
+    msg "${GRAY}****************************************************"
 }
 
-
 install_zsh_omz(){
-    msg "\n${BLUE}******** Installing zsh and oh My Zsh! ******"
+    msg "\n${BLUE}******** zsh and oh My Zsh! ******"
     # install ZSH
-    msg "\n${BLUE}sudo apt -y install zsh requires the password"
-    sudo apt -y install zsh
+    #todo: check if I already have the sudo permission
+    msg "${BLUE} sudo apt -y install zsh requires the password:"
+    sudo apt -y install zsh &> /dev/null
 
     # install oh-my-zsh via curl
     # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
@@ -192,7 +204,7 @@ install_pl10k(){
         die "${RED} Install oh-my-zsh first (./playbook-kali.sh --omz --user <username>)"
     fi
 
-    msg "\n${CYAN}******** Installing powerlevel10k ******"
+    msg "\n${CYAN}******** powerlevel10k ******"
 
     # download powerlevel10k theme
     if [ ! -d "/home/${user}/.oh-my-zsh/custom/themes/powerlevel10k" ];
@@ -235,13 +247,14 @@ fi\n"
 }
 
 install_pyenv(){
-    msg "\n${PURPLE}******** Installing pyenv ******"
+    msg "\n${PURPLE}******** pyenv ******"
 
     # Install pyenv
+    msg "${PURPLE} Installing pyenv...."
     curl -fsSL https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash &> /dev/null
 
     # Load pyenv automatically by appending to .zshrc
-    msg "${PURPLE}Adding 'pyenv' to the load path."
+    msg "${PURPLE} Adding 'pyenv' to the load path...."
     echo -e "\n# ======= pyenv load path config =======
 export PYENV_ROOT=\"\$HOME/.pyenv\"
 export PATH=\"\$PYENV_ROOT/bin:\$PATH\"
@@ -267,9 +280,11 @@ enable_virtual_enviroment_on_bash(){
 }
 
 install_docker(){
-    msg "\n${ORANGE}******** Installing docker ******"
+    msg "${ORANGE}******** Installing docker ******"
     # Run the following command to uninstall all conflicting packages:
     set +Eeuo pipefail
+    #todo: check if I already have the sudo permission
+    msg "\n${ORANGE} sudo apt remove requires password:"
     for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt remove &> /dev/null $pkg; done
     set -Eeuo pipefail
 
@@ -279,26 +294,33 @@ install_docker(){
     # *** pay attention about debian version
     printf '%s\n' "deb https://download.docker.com/linux/debian $stable_debian_version stable" | sudo tee /etc/apt/sources.list.d/docker-ce.list &> /dev/null
     curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/docker-ce-archive-keyring.gpg &> /dev/null
-    msg "\n${ORANGE} Updating system...."
+    msg "${ORANGE} Updating system...."
     sudo apt update &> /dev/null
 
-    msg "\n${ORANGE} Installing docker...."
+    msg "${ORANGE} Installing docker...."
     sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &> /dev/null
 
     # add yourself to the docker group to use docker without sudo:
     sudo usermod -aG docker "$user"
+    sudo docker pull hello-world
+
+    #todo: tail only first lne
+    sudo docker run hello-world 
     msg "${ORANGE}****************************************************\n"
 }
 
 # ./Desktop/playbook-kali.sh --omz --pl10k --pyenv --user kali
 # ./Desktop/playbook-kali.sh --golang
 install_golang(){ 
-    msg "\n${YELLOW}******** Installing golang ******"
+    msg "${GRAY}******** Installing golang ******"
 
     # Download golang
+    wget -q https://go.dev/dl/go1.21.3.linux-amd64.tar.gz
 
     # Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:
-    rm -rf /usr/local/go && tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
+    #todo: check if I already have the sudo permission
+    msg "\n${GRAY} sudo rm -rf /usr/local/go requires password:"
+    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
 
     # (You may need to run the command as root or through sudo).
     # Do not untar the archive into an existing /usr/local/go tree. This is known to produce broken Go installations.
@@ -314,7 +336,7 @@ install_golang(){
     go version
 
     # Confirm that the command prints the installed version of Go.
-    msg "${YELLOW}****************************************************\n"
+    msg "${GRAY}****************************************************\n"
 }
 
 # start script
@@ -395,9 +417,10 @@ then
     install_docker
 fi
 
-# if [ $golang -eq 1 ];
-# then
-#     install_golang
-# fi
+# === golang ===
+if [ $golang -eq 1 ];
+then
+    install_golang
+fi
 
 cleanup

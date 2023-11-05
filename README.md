@@ -4,7 +4,7 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * zsh, ohmyz and powerlevel10k
 * pyenv and enable virtualenv version on zsh bash (if present)
 * docker-ce, docker compose plugin
-* golang
+* golang (v1.21.3 x86-64)
 
 <!-- ## Table of contents
     * [General info](#general-info)
