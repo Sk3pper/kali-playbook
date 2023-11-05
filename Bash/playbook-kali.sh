@@ -153,7 +153,7 @@ install_vscode(){
 
 
 install_zsh_omz(){
-    msg "\n${BLUE}******** Installing zsh and h My Zsh! ******"
+    msg "\n${BLUE}******** Installing zsh and oh My Zsh! ******"
     # install ZSH
     msg "\n${BLUE}sudo apt -y install zsh requires the password"
     sudo apt -y install zsh
@@ -229,9 +229,8 @@ fi\n"
     wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k-instant-prompt-kali.zsh.zwc &> /dev/null
     chmod 444 /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc
 
-    msg "${CYAN} To customize prompt, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
+    msg "${CYAN} To customize prompt as you like, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
 
-    # idea: copia e incolla il mio file di configurazione (~/.p10k.zsh), e scrivi che se non piace di runnare "p10k configure"
     msg "${CYAN}****************************************************"
 }
 
@@ -241,11 +240,11 @@ install_pyenv(){
     msg "\n${PURPLE}******** Installing pyenv ******"
 
     # Install pyenv
-    curl -L https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash
+    curl -fsSL https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash &> /dev/null
 
     # Load pyenv automatically by appendind to .zshrc
-    msg "\n${PURPLE}Adding 'pyenv' to the load path."
-    echo -e "# ======= pyenv load path config =======
+    msg "${PURPLE}Adding 'pyenv' to the load path."
+    echo -e "\n# ======= pyenv load path config =======
 export PYENV_ROOT=\"\$HOME/.pyenv\"
 export PATH=\"\$PYENV_ROOT/bin:\$PATH\"
 if command -v pyenv 1>/dev/null 2>&1; then
