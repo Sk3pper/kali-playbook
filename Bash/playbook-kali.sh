@@ -207,19 +207,23 @@ install_pl10k(){
     sed -i 's/ZSH_THEME="robbyrussell"/ ZSH_THEME="powerlevel10k\/powerlevel10k"/' /home/"${user}"/.zshrc &> /dev/null
 
     # edit .zshrc file adding in the head of file
-    sed -i '1s/^/# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+    text_to_add="# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then
 source \"\${XDG_CACHE_HOME:-\$HOME\/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
-fi/'  /home/"${user}"/.zshrc
+fi
+"
+    zsrc=$(cat "/home/kali/.zshrc")
+    echo "$text_to_add" > /home/"${user}"/.zshrc
+    echo "$zsrc" >> /home/"${user}"/.zshrc
 
     # edit .zshrc file adding in the tail
-    echo -e "# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
+    echo "# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
 
     # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
-    wget -O /home/"${user}"/.pk10.sh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/pk10.sh
+    wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k.zsh &> /dev/null
 
     msg "${CYAN} To customize prompt, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
 
