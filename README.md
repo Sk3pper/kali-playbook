@@ -2,7 +2,7 @@
 The purpose of this script is to easy install all the necessary tools/configurations in a kali machine. The supported installations/configurations in this moment are:
 * vscode
 * zsh, ohmyz and powerlevel10k
-* pyenv and enable virtualenv version on zsh bash (if present)
+* pyenv and enable virtualenv version on zsh bash
 * docker-ce, docker compose plugin
 * golang (v1.21.3 x86-64)
 
@@ -35,11 +35,23 @@ sh -c "$(fetch -o - https://raw.githubusercontent.com/Sk3pper/playbook-kali/main
 
 ### Bash 💻
 ```
-./playbook-kali.sh all --stable-debian-version bookworm --zsh-user kali
-./playbook-kali.sh --zsh --pl10k --zsh-user kali
-./playbook-kali.sh --pyenv
-./playbook-kali.sh --docker --stable-debian-version bookworm
-./playbook-kali.sh --pyenv --zsh --pl10k
+# install all componets
+./playbook-kali.sh --all --stable-debian-version bookworm --user kali
+
+# install vscode
+./playbook-kali.sh --vscode
+
+# install oh-my-zsh and powerlevel10k
+./playbook-kali.sh --omz --pl10k --user kali
+
+# install pyenv
+./playbook-kali.sh --pyenv --user kali
+
+# install docker-ce, docker compose plugin
+./playbook-kali.sh --docker --stable-debian-version bookworm --user kali
+
+# install golang v1.21.3 x86-64
+./playbook-kali.sh --golang
 ```
 <!-- add gift/video -->
 

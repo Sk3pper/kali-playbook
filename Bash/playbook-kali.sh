@@ -39,9 +39,9 @@ Available options:
 
 Example:
     - ./playbook-kali.sh --all --stable-debian-version bookworm --user kali
-    - ./playbook-kali.sh --vscode --omz --pl10k
+    - ./playbook-kali.sh --vscode
     - ./playbook-kali.sh --omz --pl10k --user kali
-    - ./playbook-kali.sh --pyenv
+    - ./playbook-kali.sh --pyenv --user kali
     - ./playbook-kali.sh --docker --stable-debian-version bookworm --user kali
     - ./playbook-kali.sh --golang
 EOF
