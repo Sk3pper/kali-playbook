@@ -27,7 +27,6 @@ Available options:
 -v, --verbose               Print script debug info
 -a, --all                   Install all the tools listed above
 -c, --vscode                Install vscode
-#todo change name to omz, here we are going to install oh-my-zsh nopt zsh
 -z, --omz                  Install zsh and oh-my-zsh
 -u, --zsh-user              Specify the user to enable zsh
 -k, --pl10k                 Install powerlevel10k template on zsh
@@ -224,6 +223,12 @@ fi
 
     # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
     wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k.zsh &> /dev/null
+
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k-instant-prompt-kali.zsh &> /dev/null
+    chmod /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh 700
+
+    chmod /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc 444
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/p10k-instant-prompt-kali.zsh.zwc &> /dev/null
 
     msg "${CYAN} To customize prompt, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
 
