@@ -35,7 +35,7 @@ sh -c "$(fetch -o - https://raw.githubusercontent.com/Sk3pper/playbook-kali/main
 
 ### Bash 💻
 ```
-# install all componets
+# install all components
 ./playbook-kali.sh --all --stable-debian-version bookworm --user kali
 
 # install vscode
