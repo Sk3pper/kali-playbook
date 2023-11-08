@@ -7,7 +7,6 @@
 #   docker-ce, docker compose plugin
 #   golang
 
-
 # fail fast
 set -Eeuo pipefail
 
