@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#todo: create global vars with urls
-
 # The purpose of this script is to easy install all the necessary tools/configurations in a kali machine. The supported installations/configurations in this moment are:
 #   vscode
 #   zsh, ohmyz and powerlevel10k
@@ -135,6 +133,30 @@ parse_params() {
     return 0
 }
 
+has_sudo() {
+    local prompt
+
+    prompt=$(sudo -nv 2>&1)
+    if [ $? -eq 0 ]; then
+        echo "has_sudo__pass_set"
+    elif echo "$prompt" | grep -q '^sudo:'; then
+        echo "has_sudo__needs_pass"
+    else
+        echo "no_sudo"
+    fi
+}
+
+notify_elevate () {
+    local cmd=$@
+    HAS_SUDO=$(has_sudo)
+
+    case "$HAS_SUDO" in
+        has_sudo__needs_pass)
+            echo "Please supply sudo password for the following command: sudo $cmd"
+            ;;
+    esac
+}
+
 install_all(){
     msg "${GREEN}" "\n******** Installing all components ******"
     install_vscode
@@ -149,8 +171,9 @@ install_all(){
 install_vscode(){
     msg "${GRAY}" "\n******** vscode ******"
 
-    msg "${GRAY}" " sudo apt install wget gpg requires password:"
-    sudo apt -y install wget gpg &>> "${log_path_file}"
+    local cmd="apt -y install wget gpg"
+    notify_elevate "$cmd"
+    sudo $cmd &>> ${log_path_file}
 
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > packages.microsoft.gpg
 
@@ -173,9 +196,9 @@ install_vscode(){
 install_zsh_omz(){
     msg "${BLUE}" "\n******** zsh and oh My Zsh! ******"
     # install ZSH
-    #todo: check if I already have the sudo permission
-    msg "${BLUE}" " sudo apt -y install zsh requires the password:"
-    sudo apt -y install zsh &>> "${log_path_file}"
+    local cmd="apt -y install zsh"
+    notify_elevate "$cmd"
+    sudo $cmd &>> ${log_path_file}
 
     # install oh-my-zsh via curl
     # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
@@ -192,6 +215,7 @@ install_zsh_omz(){
     sudo chsh -s /bin/zsh "$user" 1>> "${log_path_file}"
 
     # check if $user has set properly
+    local check
     check=$(sudo cat /etc/passwd | grep "$user")
 
     if [[ "$check" != *"/bin/zsh"* ]]; then
@@ -225,15 +249,17 @@ install_pl10k(){
     sed -i 's/ZSH_THEME="robbyrussell"/ ZSH_THEME="powerlevel10k\/powerlevel10k"/' /home/"${user}"/.zshrc &>> "${log_path_file}"
 
     # edit .zshrc file adding in the head of file
+    local text_to_add
     text_to_add="# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must go above this block; everything else may go below.
 if [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then
 source \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
 fi\n"
-    zsrc=$(cat "/home/${user}/.zshrc")
+    local zshrc_payload
+    zshrc_payload=$(cat "/home/${user}/.zshrc")
     echo -e "$text_to_add" > /home/"${user}"/.zshrc
-    echo "$zsrc" >> /home/"${user}"/.zshrc
+    echo "$zshrc_payload" >> /home/"${user}"/.zshrc
 
     # edit .zshrc file adding in the tail
     echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
@@ -287,12 +313,12 @@ enable_virtual_enviroment_on_bash(){
 }
 
 install_docker(){
-    msg "${ORANGE}" "${ORANGE}******** Installing docker ******"
+    msg "${ORANGE}" "******** Installing docker ******"
     # Run the following command to uninstall all conflicting packages:
     set +Eeuo pipefail
-    #todo: check if I already have the sudo permission
-    msg "${ORANGE}" " sudo apt remove requires password:"
-    for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt remove &>> "${log_path_file}" $pkg; done
+    local cmd="apt remove docker.io docker-doc docker-compose podman-docker containerd runc"
+    notify_elevate "$cmd"
+    for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo $cmd &>> ${log_path_file} $pkg; done
     set -Eeuo pipefail
 
     # docker-ce can be installed from Docker repository. One thing to bear in mind, Kali Linux is based on Debian, so we need to use Debian’s current stable version (even though Kali Linux is a rolling distribution). 
@@ -316,32 +342,37 @@ install_docker(){
     msg "${ORANGE}" "****************************************************\n"
 }
 
-# ./Desktop/playbook-kali.sh --omz --pl10k --pyenv --user kali
-# ./Desktop/playbook-kali.sh --golang
 install_golang(){ 
     msg "${GRAY}" "******** Installing golang ******"
 
     # Download golang
+    msg "${GRAY}" " Downloading go https://go.dev/dl/go1.21.3.linux-amd64.tar.gz"
     wget -q https://go.dev/dl/go1.21.3.linux-amd64.tar.gz
 
-    # Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go:
-    #todo: check if I already have the sudo permission
-    msg "${GRAY}" " sudo rm -rf /usr/local/go requires password:"
-    sudo rm -rf /usr/local/go && sudo tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz
-
+    # Remove any previous Go installation by deleting the /usr/local/go folder (if it exists), then extract the archive you just downloaded into /usr/local, creating a fresh Go tree in /usr/local/go
     # (You may need to run the command as root or through sudo).
     # Do not untar the archive into an existing /usr/local/go tree. This is known to produce broken Go installations.
+    msg "${GRAY}" " Remove any previous Go installation by deleting the /usr/local/go folder (if it exists)"
+    local cmd="rm -rf /usr/local/go"
+    notify_elevate "$cmd"
+    sudo $cmd
+
+    msg "${GRAY}" " Extract the archive into /usr/local, creating a fresh Go tree in /usr/local/go"
+    cmd="tar -C /usr/local -xzf go1.21.3.linux-amd64.tar.gz"
+    notify_elevate "$cmd"
+    sudo $cmd
 
     # Add /usr/local/go/bin to the PATH environment variable.
     # You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
-
     export PATH=$PATH:/usr/local/go/bin
 
-    # Note: Changes made to a profile file may not apply until the next time you log into your computer. To apply the changes immediately, just run the shell commands directly or execute them from the profile using a command such as source $HOME/.profile.
-
     # Verify that you've installed Go by opening a command prompt and typing the following command:
-    go version
+    local check
+    check=$(go version)
+    msg "${GRAY}" " Check go installation: $check"
 
+    msg "${GRAY}" " Cleaning file go1.21.3.linux-amd64.tar.gz"
+    rm go1.21.3.linux-amd64.tar.gz
     # Confirm that the command prints the installed version of Go.
     msg "${GRAY}" "****************************************************\n"
 }
