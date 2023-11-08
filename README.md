@@ -99,4 +99,4 @@ Template bash script template is taken from [script-template.sh](https://gist.gi
 
 ## Tests
 Tested on
-- [x] kali-linux-2023.3-vmware-amd64 version
+- [x] kali-linux-2023.3-vmware-amd64 version (```SHA256sum cda701776d4e17c24845c0b2d57e40f4fecab5c7de22d88ddc7bdaef671b0838```)
