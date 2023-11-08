@@ -5,6 +5,9 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * pyenv and enable virtualenv version on zsh bash
 * docker-ce, docker compose plugin
 * golang (v1.21.3 x86-64)
+  
+![ezgif-2-69356ec15a](https://github.com/Sk3pper/playbook-kali/assets/13051136/d2ea05c1-d041-40df-9e6a-fa7f2586d6a9)
+
 
 <!-- ## Table of contents
     * [General info](#general-info)
