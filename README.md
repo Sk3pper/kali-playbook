@@ -96,3 +96,7 @@ Template bash script template is taken from [script-template.sh](https://gist.gi
 #Todo -->
 
 <!-- Enviroment where it was tested -->
+
+## Tests
+Tested on
+- [x] kali-linux-2023.3-vmware-amd64 version
