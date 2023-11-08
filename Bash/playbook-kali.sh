@@ -188,8 +188,6 @@ install_vscode(){
     msg "${GRAY}" " Installing vscode...."
     sudo apt install code &>> "${log_path_file}" # or code-insiders
 
-    code
-
     msg "${GRAY}" "****************************************************"
 }
 
@@ -333,12 +331,14 @@ install_docker(){
     msg "${ORANGE}" " Installing docker...."
     sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &>> "${log_path_file}"
 
-    # add yourself to the docker group to use docker without sudo:
-    sudo usermod -aG docker "$user"
-    sudo docker pull hello-world
+    # add yourself to the docker group to use docker without sudo
+    sudo usermod -aG docker "$user" &>> ${log_path_file}
 
-    #todo: tail only first lne
-    sudo docker run hello-world 
+    # check installation
+    sudo docker pull hello-world &>> ${log_path_file}
+    local check
+    check=$(sudo docker run hello-world | head -2)
+    msg "${ORANGE}" " Check docker installation: $check"
     msg "${ORANGE}" "****************************************************\n"
 }
 
