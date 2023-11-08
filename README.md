@@ -16,7 +16,8 @@ The purpose of this script is to easy install all the necessary tools/configurat
 
 ```
 wget -qO https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh
-./playbppl-kali.sh --help
+chmod 744 ./playbook-kali.sh
+./playbook-kali.sh --help
 ```
 
 <!-- Usage section -->

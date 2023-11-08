@@ -15,7 +15,7 @@ set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
 
 # get script location
-script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
+# script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 
 usage() {
 msg "${NOFORMAT}"
@@ -152,7 +152,7 @@ notify_elevate () {
 
     case "$HAS_SUDO" in
         has_sudo__needs_pass)
-            echo "Please supply sudo password for the following command: sudo $cmd"
+            echo " Please supply sudo password for the following command: sudo $cmd"
             ;;
     esac
 }
@@ -200,11 +200,16 @@ install_zsh_omz(){
 
     # install oh-my-zsh via curl
     # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
+    msg "${BLUE}" " Installing oh My Zsh! ******"
+
     export RUNZSH="no"
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &>> "${log_path_file}"
 
+    msg "${BLUE}" " Installing zsh-autosuggestions"
     # install zsh-autosuggestions 
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &>> "${log_path_file}"
+
+    msg "${BLUE}" " Installing zsh-syntax-highlighting"
 
     # zsh-syntax-highlighting 
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting &>> "${log_path_file}"
@@ -220,6 +225,7 @@ install_zsh_omz(){
         die "switch from old to ZSH bash it didn't work out"
     fi
 
+    msg "${BLUE}" " Enable zsh-autosuggestions and zsh-syntax-highlighting"
     # enable zsh-autosuggestions and zsh-syntax-highlighting
     sed -i 's/plugins=(git)/plugins=(git zsh-autosuggestions zsh-syntax-highlighting)/' /home/"${user}"/.zshrc &>> "${log_path_file}"
 
@@ -248,20 +254,14 @@ install_pl10k(){
 
     # edit .zshrc file adding in the head of file
     local text_to_add
-    text_to_add="# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then
-source \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"
-fi\n"
+    text_to_add="# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.\n# Initialization code that may require console input (password prompts, [y/n]\n# confirmations, etc.) must go above this block; everything else may go below.\nif [[ -r \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\" ]]; then\nsource \"\${XDG_CACHE_HOME:-\$HOME/.cache}/p10k-instant-prompt-\${(%):-%n}.zsh\"\nfi\n"
     local zshrc_payload
     zshrc_payload=$(cat "/home/${user}/.zshrc")
     echo -e "$text_to_add" > /home/"${user}"/.zshrc
     echo "$zshrc_payload" >> /home/"${user}"/.zshrc
 
     # edit .zshrc file adding in the tail
-    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
+    echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
 
     # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
     wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k.zsh &>> "${log_path_file}"
@@ -281,18 +281,12 @@ install_pyenv(){
     msg "${PURPLE}" "\n******** pyenv ******"
 
     # Install pyenv
-    msg "${PURPLE}" "Installing pyenv...."
+    msg "${PURPLE}" " Installing pyenv...."
     curl -fsSL https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash &>> "${log_path_file}"
 
     # Load pyenv automatically by appending to .zshrc
     msg "${PURPLE}" " Adding 'pyenv' to the load path...."
-    echo -e "\n# ======= pyenv load path config =======
-export PYENV_ROOT=\"\$HOME/.pyenv\"
-export PATH=\"\$PYENV_ROOT/bin:\$PATH\"
-if command -v pyenv 1>/dev/null 2>&1; then
-eval \"\$(pyenv init --path)\"
-fi
-eval \"\$(pyenv virtualenv-init -)\"" >> /home/"${user}"/.zshrc
+    echo -e "\n# ======= pyenv load path config ======= \nexport PYENV_ROOT=\"\$HOME/.pyenv\" \nexport PATH=\"\$PYENV_ROOT/bin:\$PATH\" \nif command -v pyenv 1>/dev/null 2>&1; then \neval \"\$(pyenv init --path)\" \nfi \neval \"\$(pyenv virtualenv-init -)\"" >> /home/"${user}"/.zshrc
 
     msg "${PURPLE}" "****************************************************\n"
 }
@@ -332,10 +326,10 @@ install_docker(){
     sudo apt -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin &>> "${log_path_file}"
 
     # add yourself to the docker group to use docker without sudo
-    sudo usermod -aG docker "$user" &>> ${log_path_file}
+    sudo usermod -aG docker "$user" &>> "${log_path_file}"
 
     # check installation
-    sudo docker pull hello-world &>> ${log_path_file}
+    sudo docker pull hello-world &>> "${log_path_file}"
     local check
     check=$(sudo docker run hello-world | head -2)
     msg "${ORANGE}" " Check docker installation: $check"
@@ -365,8 +359,11 @@ install_golang(){
     # Add /usr/local/go/bin to the PATH environment variable.
     # You can do this by adding the following line to your $HOME/.profile or /etc/profile (for a system-wide installation):
     export PATH=$PATH:/usr/local/go/bin
+    msg "${GRAY}" " Adding 'golang' to the load path...."
+    echo -e "\n# ======= golang load path config =======\nexport PATH=\$PATH:/usr/local/go/bin" >> /home/"${user}"/.zshrc
 
-    # Verify that you've installed Go by opening a command prompt and typing the following command:
+    # Verify that you've installed Go by opening a command prompt and typing the following command
+    export PATH=$PATH:/usr/local/go/bin
     local check
     check=$(go version)
     msg "${GRAY}" " Check go installation: $check"
@@ -456,7 +453,11 @@ then
 fi
 
 # === golang ===
-if [ $golang -eq 1 ];
+if [ $golang -eq 1 ] && [ -z "$user" ] ;
+then
+    msg "${RED}" "It is not possible to proceed. Specify the user to enable golang automatically in the user terminal (eg: kali)"
+    usage
+elif [ $golang -eq 1 ] &&  [ ! -z "$user" ] ;
 then
     install_golang
 fi
