@@ -13,22 +13,11 @@ The purpose of this script is to easy install all the necessary tools/configurat
 -->
 
 ## Installation 🔨
-### Run via curl
-```
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh) --help"
-```
 
-### Run via wget
 ```
-sh -c "$(wget -qO- https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh) --help"
+wget -qO https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh
+./playbppl-kali.sh --help
 ```
-
-### Run via fetch
-```
-sh -c "$(fetch -o - https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh) --help"
-```
-
-#
 
 <!-- Usage section -->
 ## Usage 🔫
