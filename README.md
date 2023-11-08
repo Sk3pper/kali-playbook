@@ -34,24 +34,44 @@ sh -c "$(fetch -o - https://raw.githubusercontent.com/Sk3pper/playbook-kali/main
 ## Usage 🔫
 
 ### Bash 💻
+#### Usage
+```
+playbook-kali.sh [-h] [-v] [--all] [--vscode] [--zsh] [--user] [--pl10k] [--pyenv] [--docker] [--golang] -s stable-debian-version -u zsh-user --log-path-file log-playbook
+
+Available options:
+-h, --help                  Print this help and exit
+-v, --verbose               Print script debug info
+-l, --log-path-file         log path file (if not specified only default messages are printed on the terminal)               
+-a, --all                   Install all the tools listed above
+-c, --vscode                Install vscode
+-z, --omz                   Install zsh and oh-my-zsh
+-u, --user                  Specify the user to install components
+-k, --pl10k                 Install powerlevel10k template on zsh
+-p, --pyenv                 Install pyenv
+-d, --docker                Install docker-ce and docker-compose-plugin
+-g, --golang                Install golang 1.21.3 x86-64
+-s, --stable-debian-version Specify debian stable version to install the right versions of the component (eg: bookworm)
+```
+
+#### Examples
 ```
 # install all components
-./playbook-kali.sh --all --stable-debian-version bookworm --user kali
+./playbook-kali.sh --all --stable-debian-version bookworm --user kali --log-path-file log
 
 # install vscode
-./playbook-kali.sh --vscode
+./playbook-kali.sh --vscode --log-path-file log
 
 # install oh-my-zsh and powerlevel10k
-./playbook-kali.sh --omz --pl10k --user kali
+./playbook-kali.sh --omz --pl10k --user kali --log-path-file log
 
 # install pyenv
-./playbook-kali.sh --pyenv --user kali
+./playbook-kali.sh --pyenv --user kali --log-path-file log
 
 # install docker-ce, docker compose plugin
-./playbook-kali.sh --docker --stable-debian-version bookworm --user kali
+./playbook-kali.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
 
 # install golang v1.21.3 x86-64
-./playbook-kali.sh --golang
+./playbook-kali.sh --golang --log-path-file log
 ```
 <!-- add gift/video -->
 
