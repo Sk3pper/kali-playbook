@@ -6,6 +6,7 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * docker-ce, docker compose plugin
 * golang (v1.21.3 x86-64)
   
+https://github.com/Sk3pper/playbook-kali/assets/13051136/e5e88f73-4010-4b61-86bd-78fcc01ae4d2
 
 <!-- ## Table of contents
     * [General info](#general-info)
