@@ -280,6 +280,16 @@ install_pl10k(){
 install_pyenv(){
     msg "${PURPLE}" "\n******** pyenv ******"
 
+    msg "${PURPLE}" " Updating system...."
+    local cmd="apt update"
+    notify_elevate "$cmd"
+    sudo $cmd &>> ${log_path_file}\
+
+    msg "${PURPLE}" " Installing dependencies...."
+    cmd="apt install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git"
+    notify_elevate "$cmd"
+    sudo $cmd &>> ${log_path_file}
+
     # Install pyenv
     msg "${PURPLE}" " Installing pyenv...."
     curl -fsSL https://raw.githubusercontent.com/pyenv/pyenv-installer/master/bin/pyenv-installer | bash &>> "${log_path_file}"
