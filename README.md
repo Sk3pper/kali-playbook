@@ -6,7 +6,7 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * docker-ce, docker compose plugin
 * golang (v1.21.3 x86-64)
   
-https://github.com/Sk3pper/playbook-kali/assets/13051136/e5e88f73-4010-4b61-86bd-78fcc01ae4d2
+https://github.com/Sk3pper/kali-playbook/assets/13051136/e5e88f73-4010-4b61-86bd-78fcc01ae4d2
 
 
 <!-- ## Table of contents
@@ -18,9 +18,9 @@ https://github.com/Sk3pper/playbook-kali/assets/13051136/e5e88f73-4010-4b61-86bd
 ## Installation 🔨
 
 ```
-wget -qO https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/playbook-kali.sh
-chmod 744 ./playbook-kali.sh
-./playbook-kali.sh --help
+wget -qO https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/kali-playbook.sh
+chmod 744 ./kali-playbook.sh
+./kali-playbook.sh --help
 ```
 
 <!-- Usage section -->
@@ -29,7 +29,7 @@ chmod 744 ./playbook-kali.sh
 ### Bash 💻
 #### Usage
 ```
-playbook-kali.sh [-h] [-v] [--all] [--vscode] [--zsh] [--user] [--pl10k] [--pyenv] [--docker] [--golang] -s stable-debian-version -u zsh-user --log-path-file log-playbook
+kali-playbook.sh [-h] [-v] [--all] [--vscode] [--zsh] [--user] [--pl10k] [--pyenv] [--docker] [--golang] -s stable-debian-version -u zsh-user --log-path-file log-playbook
 
 Available options:
 -h, --help                  Print this help and exit
@@ -49,22 +49,22 @@ Available options:
 #### Examples
 ```
 # install all components
-./playbook-kali.sh --all --stable-debian-version bookworm --user kali --log-path-file log
+./kali-playbook.sh --all --stable-debian-version bookworm --user kali --log-path-file log
 
 # install vscode
-./playbook-kali.sh --vscode --log-path-file log
+./kali-playbook.sh --vscode --log-path-file log
 
 # install oh-my-zsh and powerlevel10k
-./playbook-kali.sh --omz --pl10k --user kali --log-path-file log
+./kali-playbook.sh --omz --pl10k --user kali --log-path-file log
 
 # install pyenv
-./playbook-kali.sh --pyenv --user kali --log-path-file log
+./kali-playbook.sh --pyenv --user kali --log-path-file log
 
 # install docker-ce, docker compose plugin
-./playbook-kali.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
+./kali-playbook.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
 
 # install golang v1.21.3 x86-64
-./playbook-kali.sh --golang --log-path-file log
+./kali-playbook.sh --golang --log-path-file log
 ```
 <!-- add gift/video -->
 

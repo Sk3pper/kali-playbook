@@ -36,12 +36,12 @@ Available options:
 -s, --stable-debian-version Specify debian stable version to install the right versions of the component (eg: bookworm)
 
 Example:
-    - ./playbook-kali.sh --all --stable-debian-version bookworm --user kali --log-path-file log
-    - ./playbook-kali.sh --vscode --log-path-file log
-    - ./playbook-kali.sh --omz --pl10k --user kali --log-path-file log
-    - ./playbook-kali.sh --pyenv --user kali --log-path-file log
-    - ./playbook-kali.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
-    - ./playbook-kali.sh --golang --log-path-file log
+    - ./kali-playbook.sh --all --stable-debian-version bookworm --user kali --log-path-file log
+    - ./kali-playbook.sh --vscode --log-path-file log
+    - ./kali-playbook.sh --omz --pl10k --user kali --log-path-file log
+    - ./kali-playbook.sh --pyenv --user kali --log-path-file log
+    - ./kali-playbook.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
+    - ./kali-playbook.sh --golang --log-path-file log
 EOF
 exit
 }
@@ -235,7 +235,7 @@ install_pl10k(){
     # check if .oh-my-zsh is installed
     if [ ! -d "/home/${user}/.oh-my-zsh" ];
     then
-        die "${RED} Install oh-my-zsh first (./playbook-kali.sh --omz --user <username>)"
+        die "${RED} Install oh-my-zsh first (./kali-playbook.sh --omz --user <username>)"
     fi
 
     msg "${CYAN}" "\n******** powerlevel10k ******"
@@ -263,12 +263,12 @@ install_pl10k(){
     echo -e "\n# To customize prompt, run \`p10k configure\` or edit ~/.p10k.zsh.\n[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh" >>  /home/"${user}"/.zshrc
 
     # download customize p10k.zsh config file under /home/"${user}"/.p10k.zsh path
-    wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k.zsh &>> "${log_path_file}"
+    wget -O /home/"${user}"/.p10k.zsh https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/config/p10k.zsh &>> "${log_path_file}"
 
-    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k-instant-prompt-kali.zsh &>> "${log_path_file}"
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/config/p10k-instant-prompt-kali.zsh &>> "${log_path_file}"
     chmod 700 /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh
 
-    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/playbook-kali/main/Bash/config/p10k-instant-prompt-kali.zsh.zwc &>> "${log_path_file}"
+    wget -O /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/config/p10k-instant-prompt-kali.zsh.zwc &>> "${log_path_file}"
     chmod 444 /home/"${user}"/.cache/p10k-instant-prompt-kali.zsh.zwc
 
     msg "${CYAN}" " To customize prompt as you like, open new terminal and run \`p10k configure\` or edit ~/.p10k.zsh."
@@ -304,7 +304,7 @@ enable_virtual_enviroment_on_bash(){
     # if powerlevel10k is present, enable virtualenv version on bash
     if [ ! -f ~/.p10k.zsh ];
     then
-        die "${RED} Install oh-my-zsh and powerlevel10k theme first (./playbook-kali.sh --omz --pl10k --user <username>)"
+        die "${RED} Install oh-my-zsh and powerlevel10k theme first (./kali-playbook.sh --omz --pl10k --user <username>)"
     fi
 
     if grep -q "ZSH_THEME=\"powerlevel10k\/powerlevel10k\"" /home/"${user}"/.p10k.zsh;
