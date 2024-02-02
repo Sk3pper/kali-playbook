@@ -4,7 +4,7 @@ The purpose of this script is to easy install all the necessary tools/configurat
 * zsh, ohmyz and powerlevel10k
 * pyenv and enable virtualenv version on zsh bash
 * docker-ce, docker compose plugin
-* golang (v1.21.3 x86-64)
+* golang (v1.21.6 x86-64)
   
 https://github.com/Sk3pper/kali-playbook/assets/13051136/e5e88f73-4010-4b61-86bd-78fcc01ae4d2
 
@@ -42,7 +42,7 @@ Available options:
 -k, --pl10k                 Install powerlevel10k template on zsh
 -p, --pyenv                 Install pyenv
 -d, --docker                Install docker-ce and docker-compose-plugin
--g, --golang                Install golang 1.21.3 x86-64
+-g, --golang                Install golang 1.21.6 x86-64
 -s, --stable-debian-version Specify debian stable version to install the right versions of the component (eg: bookworm)
 ```
 
@@ -63,7 +63,7 @@ Available options:
 # install docker-ce, docker compose plugin
 ./kali-playbook.sh --docker --stable-debian-version bookworm --user kali --log-path-file log
 
-# install golang v1.21.3 x86-64
+# install golang v1.21.6 x86-64
 ./kali-playbook.sh --golang --log-path-file log
 ```
 <!-- add gift/video -->
