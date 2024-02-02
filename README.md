@@ -18,7 +18,7 @@ https://github.com/Sk3pper/kali-playbook/assets/13051136/e5e88f73-4010-4b61-86bd
 ## Installation 🔨
 
 ```
-wget -qO https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/kali-playbook.sh
+wget -qO kali-playbook.sh https://raw.githubusercontent.com/Sk3pper/kali-playbook/main/Bash/kali-playbook.sh
 chmod 744 ./kali-playbook.sh
 ./kali-playbook.sh --help
 ```
@@ -66,21 +66,6 @@ Available options:
 # install golang v1.21.6 x86-64
 ./kali-playbook.sh --golang --log-path-file log
 ```
-<!-- add gift/video -->
-
-<!-- 
-    ### Python 🐍
-    Required python
-    ```
-    #todo
-    ```
-
-    ### Golang 🐹
-    Required Golang
-    ```
-    #todo
-``` 
--->
 
 <!-- Technologies section -->
 
@@ -90,13 +75,7 @@ Available options:
 ### Bash 💻
 Template bash script template is taken from [script-template.sh](https://gist.github.com/m-radzikowski/53e0b39e9a59a1518990e76c2bff8038). In this following [link](https://betterdev.blog/minimal-safe-bash-script-template/) you can find the full article. I added the source code template under /Bash folder with mine useful comments.
 
-<!-- ### Python 🐍
-#Todo
-
-### Golang 🐹
-#Todo -->
-
-<!-- Enviroment where it was tested -->
+<!-- Environment where it was tested -->
 
 ## Tests
 Tested on
