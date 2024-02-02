@@ -198,11 +198,12 @@ install_zsh_omz(){
     sudo $cmd &>> ${log_path_file}
 
     # install oh-my-zsh via curl
-    # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
     msg "${BLUE}" " Installing oh My Zsh! ******"
 
-    export RUNZSH="no"
-    sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" &>> "${log_path_file}"
+    # --unattended: sets both CHSH and RUNZSH to 'no'
+    # CHSH - 'no' means the installer will not change the default shell (default: yes) -> changed after
+    # RUNZSH - 'no' means the installer will not run zsh after the install (default: yes)
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended &>> "${log_path_file}"
 
     msg "${BLUE}" " Installing zsh-autosuggestions"
     # install zsh-autosuggestions 
@@ -319,7 +320,11 @@ install_docker(){
     set +Eeuo pipefail
     local cmd="apt remove docker.io docker-doc docker-compose podman-docker containerd runc"
     notify_elevate "$cmd"
-    for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo $cmd &>> ${log_path_file} $pkg; done
+    for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; 
+        do 
+            echo -e "\nsudo apt remove $pkg" &>> ${log_path_file}; 
+            sudo apt remove $pkg &>> ${log_path_file}; 
+        done
     set -Eeuo pipefail
 
     # docker-ce can be installed from Docker repository. One thing to bear in mind, Kali Linux is based on Debian, so we need to use Debian’s current stable version (even though Kali Linux is a rolling distribution). 
