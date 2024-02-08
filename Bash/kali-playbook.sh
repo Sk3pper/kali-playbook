@@ -296,8 +296,8 @@ install_pyenv(){
 
     # Load pyenv automatically by appending to .zshrc
     msg "${PURPLE}" " Adding 'pyenv' to the load path...."
-    echo -e "\n# ======= pyenv load path config ======= \nexport PYENV_ROOT=\"\$HOME/.pyenv\" \nexport PATH=\"\$PYENV_ROOT/bin:\$PATH\" \nif command -v pyenv 1>/dev/null 2>&1; then \neval \"\$(pyenv init --path)\" \nfi \neval \"\$(pyenv virtualenv-init -)\"" >> /home/"${user}"/.zshrc
-
+    echo -e "\n# ======= pyenv load path config ======= \nexport PYENV_ROOT=\"\$HOME/.pyenv\" \nexport PATH=\"\$PYENV_ROOT/bin:\$PATH\" \nexport PATH=\"\$(pyenv root)/versions/\$(pyenv version-name)/bin:$PATH\" \nif command -v pyenv 1>/dev/null 2>&1; then \neval \"\$(pyenv init --path)\" \nfi \neval \"\$(pyenv virtualenv-init -)\""
+    
     msg "${PURPLE}" "****************************************************\n"
 }
 
